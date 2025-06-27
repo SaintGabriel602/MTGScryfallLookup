@@ -27,4 +27,4 @@ jobs:
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}
           git add commander_legal.json
           git commit -m "Daily update: $(date -u +'%Y-%m-%d')" || echo "No changes to commit"
-          git push
+          git push origin HEAD
