@@ -1,0 +1,33 @@
+name: Build Oracle Cache
+on:
+  workflow_dispatch:
+
+jobs:
+  build-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Pull Git LFS objects (for oracle-cards.json.gz)
+      - name: Pull LFS files
+        run: |
+          git lfs install
+          git lfs pull
+
+      - name: Build owned-only oracle cache
+        run: |
+          python build_oracle_cache.py oracle_cache.json
+
+      - name: Commit cache to repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add oracle_cache.json
+          git commit -m "Update oracle_cache.json"
+          git push
