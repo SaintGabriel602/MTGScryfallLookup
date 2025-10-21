@@ -2,19 +2,23 @@ name: Build Oracle Cache
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write   # <-- allow pushing to the repo
+
 jobs:
   build-cache:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true   # <-- keep GITHUB_TOKEN for pushing
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # Pull Git LFS objects (for oracle-cards.json.gz)
       - name: Pull LFS files
         run: |
           git lfs install
@@ -29,5 +33,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add oracle_cache.json
-          git commit -m "Update oracle_cache.json"
+          git commit -m "Update oracle_cache.json" || echo "No changes to commit"
           git push
